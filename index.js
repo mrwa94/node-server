@@ -1,16 +1,38 @@
-const http = require('http');
-const port = 8080
+import express, { urlencoded } from "express";
+import morgan from "morgan";
+import { rateLimit } from 'express-rate-limit'
+import 'dotenv/config'
+import router from "./back-end/routes/ProductRoute.js";
 
-const products = [
-    { id: '1', title: 'phone', price: '3200' },
-    { id: '2', title: 'computer', price: '2300' }]
-const server = http.createServer((req, res) => {
-    res.writeHead(200, { 'content-Type': 'application/json' })
-    res.write(JSON.stringify(products))
-    res.write("Welcome to my server")
-    res.end()
-})
 
-server.listen(port, () => {
-    console.log("Server is running at http://localhost:8080 ")
+const app = express()
+const port = 8080;
+
+app.use(express.json())
+app.use(urlencoded({ extended: true }))
+app.use(morgan('dev'))
+app.use(router)
+
+
+const limiter = rateLimit({
+    windowMs: 1 * 60 * 1000,
+    limit: 100,
+    message: "you reach to limited request "
+
 })
+app.use(limiter)
+
+app.get("/", (req, res) => {
+    res.send("route  is running");
+});
+
+app.use((req, res, next) => {
+    res.status(404).json({
+        message: "route is not found !"
+    })
+})
+app.listen(port, () => {
+    console.log(`server is running at http://localhost:${port}`)
+});
+
+export default app;
