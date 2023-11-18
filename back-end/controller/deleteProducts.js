@@ -13,7 +13,7 @@ export const deleteProduct = (req, res) => {
             message: "product not found",
         });
     }
-    const filterProduct = products.filter((product) => product.id !== id)
+    const filterProduct = products.filter((product) => product.id == id)
     products = filterProduct
     res.status(200).send({
         success: true,

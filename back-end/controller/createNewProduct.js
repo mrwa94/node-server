@@ -6,10 +6,11 @@ let products = [
 export const createNewProduct = (req, res) => {
     const newProduct = {
         id: new Date().getTime().toString(),
-        title: req.body.title,
+        title: req.body.name,
         price: req.body.price
     }
     products.push(newProduct)
+    console.log(newProduct)
 
     res.status(200).send({
         success: true,
